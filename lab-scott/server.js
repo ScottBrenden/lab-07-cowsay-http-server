@@ -21,12 +21,16 @@ const server = module.exports = http.createServer(function(req, res) {
     // -X POST (sets the POST method)
     // -d {"text": "moo!"} (sets the req.body data)
     // http://localhost:3000/cowsay (url for the request)
+    if(req.url.pathname === '/'){
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.write('Hello World');
+      res.end();
+    }
 
     if(req.url.pathname === '/cowsay') {
       bodyParser(req, function(err) {
         if(err) console.error(err);
         let message = cowsay.say({text: req.body.text});
-        console.log(req.body);
         res.writeHead(200, {'Content-Type': 'text/plain'});
         res.write(message);
         res.end();
@@ -42,7 +46,28 @@ const server = module.exports = http.createServer(function(req, res) {
   }
 
   if(req.method === 'GET') {
+    if(req.url.pathname === '/'){
+      res.writeHead(200, {'Content-Type': 'text/plain'});
+      res.write('Hello World');
+      res.end();
+    }
 
+    if(req.url.pathname === '/cowsay'){
+      console.log(req.url.query.text);
+      if(req.url.query.text) {
+        let message = cowsay.say({text: req.url.query.text});
+        res.writeHead(200, {'Content-Type': 'text/plain'});
+        res.write(message);
+        res.end();
+      } else {
+        let message = cowsay.say(
+          {text: 'bad request\ntry localhost:3000/cowsay with a proper body OR no message has been posted'}
+        );
+        res.writeHead(400, {'Content-Type': 'text/plain'});
+        res.write(message);
+        res.end();
+      }
+    }
   }
 
 
